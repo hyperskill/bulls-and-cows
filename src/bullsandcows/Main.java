@@ -1,18 +1,21 @@
 package bullsandcows;
 
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    private static int[] randKey;
+
+    private static char[] randKey;
 
     public static void main(final String[] args) {
         Scanner scn = new Scanner(System.in);
         System.out.println("Enter length of key");
         int keys = scn.nextInt();
         setRandKey(keys);
-        System.out.println("The secret is prepared: ****.");
+        System.out.print("The secret is prepared: ");
+        for (int i = 0; i < randKey.length; i++) {
+            System.out.print("*");
+        }
+        System.out.println(" (0-9, a-f).");
         System.out.println();
         boolean game = true;
         int answer = 1;
@@ -70,10 +73,11 @@ public class Main {
     }
 
     private static void setRandKey(int keys) {
-        randKey = new int[keys];
+        String allSymbols = "0123456789abcdefghijklmnopqrstuvwxyz";
+        randKey = new char[keys];
         Random r = new Random();
         for (int i = 0; i < randKey.length; i++) {
-            randKey[i] = r.nextInt(10);
+            randKey[i] = allSymbols.charAt(r.nextInt(allSymbols.length()));
         }
     }
 }
