@@ -52,17 +52,18 @@ final class Main {
     
     public static void addDigits(int n)
     {
-        while(l != n && pseudoRandomNumber != 0)
+        final Random random = new Random();
+        
+        while(l != n)
         {
-            long d = pseudoRandomNumber % 10;
+            final int d = random.nextInt(10);
+
             if(!used[(int)d]) {
                 secret *= 10;
                 secret += d;
                 l++;
                 used[(int)d] = true;
             }
-            pseudoRandomNumber /= 10;
-
         }
     }
 
@@ -75,10 +76,7 @@ final class Main {
             System.out.println("Please enter a number not greater than 10.");
         }
         else {
-        	while(l != n) {
-                pseudoRandomNumber = System.nanoTime();
-                addDigits(n);
-            }
+            addDigits(n);
             
           while(bulls != n) {
             System.out.println();
