@@ -5,23 +5,17 @@ import java.util.*;
 public class Main {
 
     private static char[] randKey;
+    private static Scanner scn = new Scanner(System.in);
+    private static String allSymb = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     public static void main(final String[] args) {
-        Scanner scn = new Scanner(System.in);
-        System.out.println("Enter length of key");
-        int keys = scn.nextInt();
-        setRandKey(keys);
-        System.out.print("The secret is prepared: ");
-        for (int i = 0; i < randKey.length; i++) {
-            System.out.print("*");
-        }
-        System.out.println(" (0-9, a-f).");
+        getData();
         System.out.println();
         boolean game = true;
         int answer = 1;
         while (game) {
             System.out.println("Turn " + answer + ". Answer: ");
-            String answerNumbers = scn.next();
+            String answerNumbers = getAnswer();
             System.out.println(answerNumbers);
             if (checkBullsAndCows(answerNumbers)) {
                 System.out.print("Congrats! The secret number is ");
@@ -35,19 +29,67 @@ public class Main {
         }
     }
 
+    private static String getAnswer() {
+        String answer = "";
+        while (scn.hasNext()) {
+            answer = scn.next();
+            if (answer.length() == randKey.length) {
+                break;
+            } else {
+                System.out.println("bad length");
+            }
+        }
+        return answer;
+    }
+
+    private static void getData() {
+        int keys;
+        int symbols;
+        do {
+            System.out.println("Enter length of key");
+            if (scn.hasNextInt()) {
+                keys = scn.nextInt();
+            } else {
+                System.out.println("\"" + scn.next() + "\" isnt a valid number.");
+                continue;
+            }
+            System.out.println("Input the number of possible symbols in the code: ");
+            if (scn.hasNextInt()) {
+                symbols = scn.nextInt();
+            } else {
+                System.out.println("\"" + scn.next() + "\" isnt a valid number.");
+                continue;
+            }
+            if (keys > symbols) {
+                System.out.println("It's not possible to generate a code with a length of " + keys + " with " + symbols + " unique symbols.\n");
+            } else {
+                break;
+            }
+        } while (true);
+        setRandKey(keys, symbols);
+        System.out.print("The secret is prepared: ");
+        for (int i = 0; i < randKey.length; i++) {
+            System.out.print("*");
+        }
+        System.out.println();
+        System.out.println("(" + allSymb.charAt(0) + "-" + allSymb.charAt(symbols - 1) + ")");
+        System.out.println(Arrays.toString(randKey));
+    }
+
     private static boolean checkBullsAndCows(String answerNumbers) {
         int cows = 0;
         int bulls = 0;
         String result = "Grade: ";
         for (int i = 0; i < randKey.length; i++) {
             if (answerNumbers.contains(randKey[i] + "")) {
-                if (Character.getNumericValue(answerNumbers.charAt(i)) == randKey[i]) {
+                if (answerNumbers.charAt(i) == randKey[i]) {
                     bulls++;
                 } else {
                     cows++;
                 }
             }
         }
+        System.out.println(bulls + " | " + cows);
         if (cows == 1 && bulls == 0) {
             result += cows + " cow.";
         } else if (bulls == 1 && cows == 0) {
@@ -72,12 +114,15 @@ public class Main {
         }
     }
 
-    private static void setRandKey(int keys) {
-        String allSymbols = "0123456789abcdefghijklmnopqrstuvwxyz";
+    private static void setRandKey(int keys, int symbols) {
+        String allSymbols = allSymb;
+        allSymbols = allSymbols.substring(0, symbols);
         randKey = new char[keys];
         Random r = new Random();
         for (int i = 0; i < randKey.length; i++) {
-            randKey[i] = allSymbols.charAt(r.nextInt(allSymbols.length()));
+            int charNum = r.nextInt(allSymbols.length());
+            randKey[i] = allSymbols.charAt(charNum);
+            allSymbols = allSymbols.replace(allSymbols.charAt(charNum) + "", "");
         }
     }
 }
