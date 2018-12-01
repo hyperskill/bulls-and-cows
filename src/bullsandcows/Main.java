@@ -19,7 +19,7 @@ public class Main {
             System.out.println(answerNumbers);
             if (checkBullsAndCows(answerNumbers)) {
                 System.out.print("Congrats! The secret number is ");
-                for (int k : randKey) {
+                for (char k : randKey) {
                     System.out.print(k);
                 }
                 System.out.println();
@@ -73,7 +73,6 @@ public class Main {
         }
         System.out.println();
         System.out.println("(" + allSymb.charAt(0) + "-" + allSymb.charAt(symbols - 1) + ")");
-        System.out.println(Arrays.toString(randKey));
     }
 
     private static boolean checkBullsAndCows(String answerNumbers) {
@@ -89,7 +88,6 @@ public class Main {
                 }
             }
         }
-        System.out.println(bulls + " | " + cows);
         if (cows == 1 && bulls == 0) {
             result += cows + " cow.";
         } else if (bulls == 1 && cows == 0) {
