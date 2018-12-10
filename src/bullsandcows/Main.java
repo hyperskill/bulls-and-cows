@@ -1,6 +1,7 @@
 package bullsandcows;
 import java.util.ArrayList;
 import java util.Scanner;
+import java.util.Random;
 
 public class Main {
         public static void main(String[] args) {
@@ -79,14 +80,15 @@ public class Main {
 		
 		long randomNumber = 0;
 		long numeral;
-
+		Random random = new Random();
+		
 		int i = 0;
         int k = 1;
 		ArrayList list = new ArrayList();
         
        
 		while (i < numberLength ) {	
-			numeral = (int) (System.nanoTime() % 10);
+			numeral = random.nextInt(10);
 			if (!(list.contains(numeral))) {
 				list.add(numeral);
 				randomNumber = numeral*k + randomNumber;
