@@ -42,7 +42,7 @@ public class Main {
         int bulls = 0;
         int cows = 0;
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < correctAnswer.length(); i++) {
             if (correctAnswer.charAt(i) == input.charAt(i))
             {
                 bulls += 1;
@@ -78,7 +78,11 @@ public class Main {
     }
 
     public static boolean wishToExit(String userAnswer) {
-        return "/exit".equals(userAnswer);
+        if (userAnswer.startsWith("/")) {
+            return "/exit".equals(userAnswer);
+        }
+
+        return false;
     }
 
 
@@ -109,7 +113,7 @@ public class Main {
             int userBulls = 0;
             while (userBulls != secretNumberLength)
             {
-                System.out.printf("%nInput a %d-digit number.%nType /exit if you wish to exit%n", secretNumberLength);
+                System.out.printf("%nInput a %d-digit number.%n", secretNumberLength);
                 String userAnswer = scanner.nextLine().trim();
                 if (wishToExit(userAnswer))
                 {
@@ -120,7 +124,7 @@ public class Main {
                 if (isUserAnswerCorrect(userAnswer, secretNumberLength)) {
                     userBulls = grader(secretNumber, userAnswer);
                 }
-                System.out.println(" ");
+                System.out.println("");
 
             }
 
