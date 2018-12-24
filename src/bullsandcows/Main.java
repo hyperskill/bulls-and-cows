@@ -111,9 +111,10 @@ public class Main {
         if (!"Wrong input".equals(secretNumber))
         {
             int userBulls = 0;
+            int turns = 1;
             while (userBulls != secretNumberLength)
             {
-                System.out.printf("%nInput a %d-digit number.%n", secretNumberLength);
+                System.out.printf("%nTurn %d. Answer:%n", turns);
                 String userAnswer = scanner.nextLine().trim();
                 if (wishToExit(userAnswer))
                 {
@@ -125,6 +126,7 @@ public class Main {
                     userBulls = grader(secretNumber, userAnswer);
                 }
                 System.out.println("");
+                turns++;
 
             }
 
