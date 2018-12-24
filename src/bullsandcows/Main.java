@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Random;
 //package bullsandcows;
 
 public class Main {
@@ -15,23 +16,17 @@ public class Main {
         } else
         {
             String answer = "";
+            Random random = new Random(1);
+
             while (numbers > 0)
             {
-                long pseudoRandomNumber = System.nanoTime();
-                String strNum = pseudoRandomNumber + "";
+                char digit = String.valueOf(random.nextInt(10)).charAt(0);
 
-                for (int i = strNum.length() - 1; i >= 0; i --)
-                {
-                    if (numbers <= 0) break;
+                // If answer already contains that digit - pass.
+                if (answer.indexOf(digit) >= 0) continue;
 
-                    char digit = strNum.charAt(i);
-
-                    // If answer already contains that digit - pass.
-                    if (answer.indexOf(digit) >= 0) continue;
-
-                    answer += digit;
-                    numbers--;
-                }
+                answer += digit;
+                numbers--;
             }
             System.out.printf("The secret is prepared: %s.%n", new String(new char[initialNumbers]).replace("\0", "*"));
             return answer;
@@ -88,8 +83,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Hello, player! Enter the length of the secret number.");
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Hello, player! Enter the length of the secret number.");
         int secretNumberLength = scanner.nextInt();
         scanner.nextLine();
 
@@ -101,7 +97,9 @@ public class Main {
 
             if ("1".equals(wishAgain))
             {
+                System.out.println("Enter the length of the secret number.");
                 secretNumberLength = scanner.nextInt();
+                scanner.nextLine();
                 secretNumber = secretGenerator(secretNumberLength);
             } else {
                 break;
