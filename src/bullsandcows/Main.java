@@ -1,47 +1,91 @@
-import java.util.Scanner;
-import java.util.Random;
+
+import java.util.*;
 //package bullsandcows;
 
 public class Main {
 
-    public static String secretGenerator(int numbers) {
+    public static Set<Character> secretGenerator(int numbers, int possibleNumbers) {
+        /*
+        We will generate ints and then convert them to valid characters from ascii table.
+
+        ASCII codes:
+
+        0-9: 48-57 (max possibleNumbers - 10)
+        a-z: 97-122 (max possibleNumbers - 36)
+        A-Z: 65-90 (max possibleNumbers - 62) - it makes game too complicated, but can be added at any moment
+
+         */
         int initialNumbers = numbers;
 
-        if (numbers > 10 | numbers < 1)
+        Set<Character> answer = new LinkedHashSet<>();
+
+        if (numbers > possibleNumbers | numbers < 1 | possibleNumbers < 1)
         {
-            System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.%n", numbers);
-            System.out.println("Please enter a number not greater than 10.");
-            return "Wrong input";
+            System.out.printf("Can't generate a secret number with a length of %d with only %d unique symbols.%n", numbers, possibleNumbers);
+            System.out.println("Please enter a number of possible symbols no less than a number of symbols in secret.");
+            return answer;
 
         } else
         {
-            String answer = "";
+
             Random random = new Random(1);
 
             while (numbers > 0)
             {
-                char digit = String.valueOf(random.nextInt(10)).charAt(0);
+                char digit = encodeInt(random.nextInt(possibleNumbers));
 
                 // If answer already contains that digit - pass.
-                if (answer.indexOf(digit) >= 0) continue;
+                if (answer.contains(digit)) continue;
 
-                answer += digit;
+                answer.add(digit);
                 numbers--;
             }
-            System.out.printf("The secret is prepared: %s.%n", new String(new char[initialNumbers]).replace("\0", "*"));
+
+            String borderDigits = borderDigits(possibleNumbers);
+            String borderLetters = borderLetters(possibleNumbers);
+            System.out.printf("The secret is prepared: %s (%s%s).%n", new String(new char[initialNumbers]).replace("\0", "*"), borderDigits, borderLetters);
             return answer;
         }
     }
 
-    public static int grader(String correctAnswer, String input){
+    public static char encodeInt(int code) {
+        char symbol = 0;
+        if (code < 10)
+        {
+            return String.valueOf(code).charAt(0);
+        } else
+        {
+            return (char) (code - 9 + 'a');
+        }
+    }
+
+    public static String borderDigits(int code) {
+        if (code < 2)
+        {
+            return code + "";
+        }
+
+        return 0 + "-" + Math.min(9, code-1);
+    }
+
+    public static String borderLetters(int code) {
+        if (code - 10 <= 0) return "";
+        if (code - 10 == 1) return ", a";
+
+        return ", a-" + (char) (code - 9 + 'a');
+    }
+
+    public static int grader(Set<Character> correctAnswer, String input){
         int bulls = 0;
         int cows = 0;
+        int size = correctAnswer.size();
+        Iterator<Character> answerIterator = correctAnswer.iterator();
 
-        for (int i = 0; i < correctAnswer.length(); i++) {
-            if (correctAnswer.charAt(i) == input.charAt(i))
+        for (int i = 0; i < size; i++) {
+            if (answerIterator.next() == input.charAt(i))
             {
                 bulls += 1;
-            } else if (correctAnswer.indexOf(input.charAt(i)) >= 0)
+            } else if (correctAnswer.contains(input.charAt(i)))
             {
                 cows += 1;
             }
@@ -53,6 +97,7 @@ public class Main {
     }
 
     public static boolean isUserAnswerCorrect(String userAnswer, int numberLength) {
+
         // Check if user input exactly needed number of digits
         if (userAnswer.length() != numberLength) {
             System.out.printf("Please input exactly %d different digits.%n", numberLength);
@@ -69,6 +114,8 @@ public class Main {
             }
         }
 
+        // Check if there is no forbidden symbols
+
         return true;
     }
 
@@ -80,17 +127,21 @@ public class Main {
         return false;
     }
 
-
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Hello, player! Enter the length of the secret number.");
+        System.out.println("Hello, player! Enter the length of the secret number:");
         int secretNumberLength = scanner.nextInt();
         scanner.nextLine();
 
-        String secretNumber = secretGenerator(secretNumberLength);
-        while ("Wrong input".equals(secretNumber))
+        System.out.println("Enter the number of unique symbols in code:");
+        int secretNumberOfSymbols = scanner.nextInt();
+        scanner.nextLine();
+
+        Set<Character> secretNumber = secretGenerator(secretNumberLength, secretNumberOfSymbols);
+
+        while (secretNumber.isEmpty())
         {
             System.out.println("Do you wish to input length once more? 1 - yes, other - no");
             String wishAgain = scanner.nextLine().trim();
@@ -100,13 +151,19 @@ public class Main {
                 System.out.println("Enter the length of the secret number.");
                 secretNumberLength = scanner.nextInt();
                 scanner.nextLine();
-                secretNumber = secretGenerator(secretNumberLength);
+
+
+                System.out.println("Enter the number of unique symbols in code:");
+                secretNumberOfSymbols = scanner.nextInt();
+                scanner.nextLine();
+
+                secretNumber = secretGenerator(secretNumberLength, secretNumberOfSymbols);
             } else {
                 break;
             }
         }
 
-        if (!"Wrong input".equals(secretNumber))
+        if (!secretNumber.isEmpty())
         {
             int userBulls = 0;
             int turns = 1;
