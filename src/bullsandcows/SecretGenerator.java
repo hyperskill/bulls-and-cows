@@ -3,7 +3,7 @@ final class SecretGenerator {
           public static long Generate(String v) {
         
    
-    if ( v.length()>2){
+      if ( v.length()>2){
         System.out.println("Please enter a number not greater than 10.");
         return -1;
     }
@@ -14,40 +14,10 @@ final class SecretGenerator {
   }
           }
     int k=Integer.parseInt(v);
-    boolean bol=true;
-    StringBuilder s=new StringBuilder("");
-     String st="";
-    
-    while (bol){
-     st="";
-    char c;
-    int i=0;
-    int j=0;
-        long pseudoRandomNumber = System.nanoTime();
-        s =new StringBuilder(Long.toString(pseudoRandomNumber));
-        s.reverse();
-     
-     while( j<k ){
-         if (i==s.length()-1){
-             break;
-         }
-         c=s.charAt(i);
-         
-                if (!st.contains(Character.toString(c)) && !(c=='0' && j==0)){
-         st+=Character.toString(c);
-         j++;
-        
-         }
-         i++;
-         
-     }
-     if (st.length()==k){
-         
-         bol=false;
-     }
-    }
-   
-    long secret= Long.parseLong(st.toString());
+  Random r = new Random();
+int lowerBound = 1;
+int upperBound =(int)Math.pow(10,k)-1;
+int secret = r.nextInt(upperBound-lowerBound) + lowerBound;
 
     return secret;
     
