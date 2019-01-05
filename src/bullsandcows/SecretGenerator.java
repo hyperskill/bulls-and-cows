@@ -1,3 +1,4 @@
+package bullsandcows;
 final class SecretGenerator {
           public static long Generate(String v) {
         
