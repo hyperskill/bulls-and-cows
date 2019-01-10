@@ -8,17 +8,54 @@ final class BulllsAndCows {
 
         //long end = 0;
         System.out.println("Enter HC-ness!");
-        int nb = sc.nextInt();
-        while (nb > 35){
-            System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.\nPlease enter a number not greater than 10.\n", nb);
-            nb = sc.nextInt();
+        int nb = 0;
+        try{
+            int n = sc.nextInt();
+            String t = sc.nextLine();
+            nb = n;
+        }catch (Exception e){
+            String trash = sc.nextLine();
+            System.out.println("Not valible! Input number > 0 and <= 36!(0-9 + a-z)");
         }
+        while (nb > 36 || nb < 1){
+            if (nb < 1)
+                System.out.println("Needet valible number > 0!");
+            else
+                System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.\nPlease enter a number not greater than 10.\n", nb);
+            try{
+                int n = sc.nextInt();
+                String t = sc.nextLine();
+                nb = n;
+            }catch (Exception e){
+                String trash = sc.nextLine();
+                System.out.println("Not valible! Input number > 0 and <= 36!(0-9 + a-z)");
+            }
+        }
+        nb--;
         System.out.println("Numbers of digits?");
-        int nmsn = sc.nextInt();
-        while (nmsn > nb){
-            System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.\nPlease enter a number not greater than 10.\n", nmsn);
-            nmsn = sc.nextInt();
+        int nmsn = 0;
+        try{
+            int n = sc.nextInt();
+            String t = sc.nextLine();
+            nmsn = n;
+        }catch (Exception e){
+            String trash = sc.nextLine();
+            String t = sc.nextLine();
+            System.out.println("Can't generate that!");
         }
+
+        while (nmsn > nb + 1 || nmsn < 1){
+            try{
+                int n = sc.nextInt();
+                nmsn = n;
+                if (nmsn < 1 || nmsn > nb + 1)
+                    System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.\nPlease enter a number not greater than %d.\n", nmsn, nb + 1);
+            }catch (Exception e){
+                String trash = sc.nextLine();
+                System.out.println("Can't generate that!");
+            }
+        }
+        nmsn--;
         char[] end = new char[nmsn];
         int pos = 0;
         for (int n = 0; n < nmsn; n++){
