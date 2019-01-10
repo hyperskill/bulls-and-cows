@@ -1,5 +1,7 @@
 package bullsandcows;
 
+import java.util.*;
+
 final class BulllsAndCows {
     public static void main(final String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -39,16 +41,17 @@ final class BulllsAndCows {
             nmsn = n;
         }catch (Exception e){
             String trash = sc.nextLine();
-            String t = sc.nextLine();
             System.out.println("Can't generate that!");
         }
 
-        while (nmsn > 36 || nmsn < 1){
+        while (nmsn > 36 || nmsn < nb + 1){
+            if (nmsn < nb + 1 || nmsn > 36)
+                System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.\nPlease enter a number greater or equal than %d.\n", nmsn, nb);
             try{
                 int n = sc.nextInt();
+                String t = sc.nextLine();
                 nmsn = n;
-                if (nmsn < 1 || nmsn > 36)
-                    System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.\nPlease enter a number not greater than %d.\n", nmsn, nb + 1);
+
             }catch (Exception e){
                 String trash = sc.nextLine();
                 System.out.println("Can't generate that!");
@@ -78,7 +81,7 @@ final class BulllsAndCows {
             ss += c;
 
         //Uncomment to check output
-        //System.out.println(ss);
+        System.out.println(ss);
 
         while (true) {
             String inp = sc.nextLine();
