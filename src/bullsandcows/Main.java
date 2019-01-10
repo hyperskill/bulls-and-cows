@@ -1,5 +1,4 @@
 package bullsandcows;
-import java.util.*;
 
 final class BulllsAndCows {
     public static void main(final String[] args) {
@@ -7,7 +6,7 @@ final class BulllsAndCows {
         char[] nms = {'0','1','2','3','4','5','6','7','8','9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
         //long end = 0;
-        System.out.println("Enter HC-ness!");
+        System.out.println("Input the length of the secret code:");
         int nb = 0;
         try{
             int n = sc.nextInt();
@@ -32,7 +31,7 @@ final class BulllsAndCows {
             }
         }
         nb--;
-        System.out.println("Numbers of digits?");
+        System.out.println("Input the number of possible symbols in the code:");
         int nmsn = 0;
         try{
             int n = sc.nextInt();
@@ -44,11 +43,11 @@ final class BulllsAndCows {
             System.out.println("Can't generate that!");
         }
 
-        while (nmsn > nb + 1 || nmsn < 1){
+        while (nmsn > 36 || nmsn < 1){
             try{
                 int n = sc.nextInt();
                 nmsn = n;
-                if (nmsn < 1 || nmsn > nb + 1)
+                if (nmsn < 1 || nmsn > 36)
                     System.out.printf("Can't generate a secret number with a length of %d because there aren't enough unique digits.\nPlease enter a number not greater than %d.\n", nmsn, nb + 1);
             }catch (Exception e){
                 String trash = sc.nextLine();
@@ -56,6 +55,9 @@ final class BulllsAndCows {
             }
         }
         nmsn--;
+        int a = nb;
+        nb = nmsn;
+        nmsn = a;
         char[] end = new char[nmsn];
         int pos = 0;
         for (int n = 0; n < nmsn; n++){
@@ -74,7 +76,9 @@ final class BulllsAndCows {
         String ss = "";
         for (char c : end)
             ss += c;
-        System.out.println(ss);
+
+        //Uncomment to check output
+        //System.out.println(ss);
 
         while (true) {
             String inp = sc.nextLine();
