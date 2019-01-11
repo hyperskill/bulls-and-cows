@@ -30,6 +30,8 @@ public class Main {
               
            }
            System.out.println("Bulls ="+bulls+" and Cows =" + cows);
+            cows=0;
+            bulls=0;
         }
         System.out.println("Right");
     }
