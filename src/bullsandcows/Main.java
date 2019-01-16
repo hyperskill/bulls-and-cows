@@ -42,21 +42,18 @@ public class Main {
     }
 
     private static String secretGenerator(int length) {
-        String secret = "";
+        String sec = "";
         boolean isFinish = false;
         while (!isFinish) {
-            String pseudo = String.valueOf(System.nanoTime());
-            for (int j = pseudo.length() - 1; j >= 0; j--) {
-                if (secret.indexOf(pseudo.charAt(j)) == -1) {
-                    secret += pseudo.charAt(j);
-                    if (secret.length() == length) {
-                        isFinish = true;
-                        break;
-                    }
+            String random = String.valueOf((int) (Math.random() * 10));
+            if (sec.indexOf(random) == -1) {
+                sec += random;
+                if (sec.length() == length) {
+                    isFinish = true;
                 }
             }
         }
-        return secret;
+        return sec;
     }
 
     private static int grader() {
@@ -103,7 +100,7 @@ public class Main {
         }
 
         for (int i = 0; i < answer.length(); i++) {
-            for (int j = i + 1; j < answer.length() ; j++) {
+            for (int j = i + 1; j < answer.length(); j++) {
                 if (answer.charAt(i) == answer.charAt(j)) {
                     return false;
                 }
