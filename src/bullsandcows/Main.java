@@ -11,27 +11,26 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        int length = 0;
-        int chars = 0;
-        boolean isCorrect = false;
+        String result = "";
+        String secretLength = "";
+        String chars = "";
 
-        do {
+        while (!"isCorrect".equals(result)) {
             System.out.println();
             System.out.println("Input the length of the secret code(from 1 to 10): ");
-            length = scanner.nextInt();
+            secretLength = scanner.nextLine();
             System.out.println("Input the number of possible symbols in the code(from 10 to 36): ");
-            chars = scanner.nextInt();
+            chars = scanner.nextLine();
 
-            isCorrect = checkUserInput(length, chars);
+            result = checkUserInput(secretLength, chars);
 
-            if (!isCorrect) {
+            if (!"isCorrect".equals(result)) {
                 System.out.println();
-                System.out.println("Incorrect input. Please try again");
+                System.out.println(result);
             }
+        }
 
-        } while (!isCorrect);
-
-        secret = secretGenerator(length, chars);
+        secret = secretGenerator(secretLength, chars);
         System.out.println("For exit input \"exit\"\n");
 
         while (!isWin) {
@@ -42,7 +41,7 @@ public class Main {
                 System.out.println("Incorrect answer, try again.");
             }
 
-            if (bulls == length) {
+            if (bulls == Integer.parseInt(secretLength)) {
                 isWin = true;
             }
         }
@@ -53,7 +52,7 @@ public class Main {
 
     }
 
-    private static String secretGenerator(int length, int chars) {
+    private static String secretGenerator(String secretLength, String chars) {
         String sec = "";
         boolean isDone = false;
         Random random = new Random();
@@ -61,11 +60,11 @@ public class Main {
         String allSymbols = "0123456789abcdefghijklmnopqrstuvwxyz";
 
         while (!isDone) {
-            int index = random.nextInt(chars);
+            int index = random.nextInt(Integer.parseInt(chars));
             String randomSymbol = String.valueOf(allSymbols.charAt(index));
             if (sec.indexOf(randomSymbol) == -1) {
                 sec += randomSymbol;
-                if (sec.length() == length) {
+                if (sec.length() == Integer.parseInt(secretLength)) {
                     isDone = true;
                 }
             }
@@ -74,12 +73,12 @@ public class Main {
         String numberStars = "";
         String availableSymbols = "0-9";
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < Integer.parseInt(secretLength); i++) {
             numberStars += "*";
         }
 
-        if (chars > 10) {
-            availableSymbols += ", " + allSymbols.charAt(10) + "-" + allSymbols.charAt(chars - 1);
+        if (Integer.parseInt(secretLength) > 10) {
+            availableSymbols += ", " + allSymbols.charAt(10) + "-" + allSymbols.charAt(Integer.parseInt(secretLength) - 1);
         }
 
         System.out.printf("The secret is prepared: %s (%s).\n\n", numberStars, availableSymbols);
@@ -143,11 +142,36 @@ public class Main {
         return true;
     }
 
-    private static boolean checkUserInput(int length, int check) {
-        if ((length == 0 || check < 10) || (length > 10 || check > 36)) {
-            return false;
+    private static String checkUserInput(String secretLength, String chars) {
+
+        for (int i = 0; i < secretLength.length(); i++) {
+            if (!Character.isDigit(secretLength.charAt(i))) {
+                return "\"" + secretLength + "\"" + " isn't a valid number";
+            }
         }
 
-        return true;
+        for (int i = 0; i < chars.length(); i++) {
+            if (!Character.isDigit(chars.charAt(i))) {
+                return "\"" + chars + "\"" + " isn't a valid number";
+            }
+        }
+
+        if (Integer.parseInt(secretLength) > 10 || Integer.parseInt(secretLength) < 1) {
+            if (Integer.parseInt(secretLength) > 10) {
+                return "Can't generate a secret number with a length of " +
+                        secretLength + " because there aren't enough unique digits.\n" +
+                        "Please enter a number not greater than 10.";
+            }
+            return "It's not possible to generate a code with a length of " + secretLength + " with " + chars + " unique symbols.";
+        }
+
+        if (Integer.parseInt(chars) < 10 || Integer.parseInt(chars) > 36) {
+            if ( Integer.parseInt(chars) > 36) {
+                return "Maximum number of possible symbols in the code is 36 (0-9, a-z).";
+            }
+            return "It's not possible to generate a code with a length of " + secretLength + " with " + chars + " unique symbols.";
+        }
+
+        return "isCorrect";
     }
 }
