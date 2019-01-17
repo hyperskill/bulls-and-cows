@@ -1,6 +1,6 @@
 package bullsandcows;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -11,48 +11,78 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Input the length of the secret code: ");
-        int length = scanner.nextInt();
+        int length = 0;
+        int chars = 0;
+        boolean isCorrect = false;
 
-        if (length > 10) {
-            System.out.println("Can't generate a secret number with a length of " + length +
-                    " because there aren't enough unique digits.");
-            System.out.println("Please enter a number not greater than 10.");
-        } else {
+        do {
+            System.out.println();
+            System.out.println("Input the length of the secret code(from 1 to 10): ");
+            length = scanner.nextInt();
+            System.out.println("Input the number of possible symbols in the code(from 10 to 36): ");
+            chars = scanner.nextInt();
 
-            secret = secretGenerator(length);
+            isCorrect = checkUserInput(length, chars);
 
-            while (!isWin) {
-
-                int bulls = grader();
-
-                if (bulls == -1) {
-                    System.out.println("Incorrect answer, try again.");
-                }
-
-                if (bulls == length) {
-                    isWin = true;
-                }
+            if (!isCorrect) {
+                System.out.println();
+                System.out.println("Incorrect input. Please try again");
             }
 
-            System.out.println("Congrats! The secret number is " + secret + ".");
+        } while (!isCorrect);
 
-            scanner.close();
+        secret = secretGenerator(length, chars);
+        System.out.println("For exit input \"exit\"\n");
+
+        while (!isWin) {
+
+            int bulls = grader();
+
+            if (bulls == -1) {
+                System.out.println("Incorrect answer, try again.");
+            }
+
+            if (bulls == length) {
+                isWin = true;
+            }
         }
+
+        System.out.println("Congrats! The secret number is " + secret + ".");
+
+        scanner.close();
+
     }
 
-    private static String secretGenerator(int length) {
+    private static String secretGenerator(int length, int chars) {
         String sec = "";
-        boolean isFinish = false;
-        while (!isFinish) {
-            String random = String.valueOf((int) (Math.random() * 10));
-            if (sec.indexOf(random) == -1) {
-                sec += random;
+        boolean isDone = false;
+        Random random = new Random();
+
+        String allSymbols = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+        while (!isDone) {
+            int index = random.nextInt(chars);
+            String randomSymbol = String.valueOf(allSymbols.charAt(index));
+            if (sec.indexOf(randomSymbol) == -1) {
+                sec += randomSymbol;
                 if (sec.length() == length) {
-                    isFinish = true;
+                    isDone = true;
                 }
             }
         }
+
+        String numberStars = "";
+        String availableSymbols = "0-9";
+
+        for (int i = 0; i < length; i++) {
+            numberStars += "*";
+        }
+
+        if (chars > 10) {
+            availableSymbols += ", " + allSymbols.charAt(10) + "-" + allSymbols.charAt(chars - 1);
+        }
+
+        System.out.printf("The secret is prepared: %s (%s).\n\n", numberStars, availableSymbols);
         return sec;
     }
 
@@ -95,6 +125,9 @@ public class Main {
     }
 
     private static boolean isAsnswerCorrect(String answer) {
+        if ("exit".equals(answer)) {
+            System.exit(0);
+        }
         if (answer.length() != secret.length()) {
             return false;
         }
@@ -105,6 +138,14 @@ public class Main {
                     return false;
                 }
             }
+        }
+
+        return true;
+    }
+
+    private static boolean checkUserInput(int length, int check) {
+        if ((length == 0 || check < 10) || (length > 10 || check > 36)) {
+            return false;
         }
 
         return true;
