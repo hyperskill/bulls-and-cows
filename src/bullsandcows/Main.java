@@ -4,37 +4,50 @@ import java.util.*;
 
 public class Main {
 
+    public static int[] readUserInput(Scanner scanner){
+        int[] ans = new int[2];
+
+        System.out.println("Enter the length of the secret number:");
+        ans[0] = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Enter the number of unique symbols in code:");
+        ans[1] = scanner.nextInt();
+        scanner.nextLine();
+
+        return ans;
+    }
+
+    /**
+       * We will generate ints and then convert them to valid characters from ascii table.
+
+        * ASCII codes:
+
+        * 0-9: 48-57 (max possibleNumbers - 10)
+        * a-z: 97-122 (max possibleNumbers - 36)
+        * A-Z: 65-90 (max possibleNumbers - 62) - it makes game too complicated, but can be added at any moment
+
+     */
+
     public static Set<Character> secretGenerator(int numbers, int possibleNumbers) {
-        /*
-        We will generate ints and then convert them to valid characters from ascii table.
 
-        ASCII codes:
-
-        0-9: 48-57 (max possibleNumbers - 10)
-        a-z: 97-122 (max possibleNumbers - 36)
-        A-Z: 65-90 (max possibleNumbers - 62) - it makes game too complicated, but can be added at any moment
-
-         */
         int initialNumbers = numbers;
 
         Set<Character> answer = new LinkedHashSet<>();
+        boolean areNumbersBad = numbers > possibleNumbers | numbers < 1 | possibleNumbers < 1;
 
-        if (numbers > possibleNumbers | numbers < 1 | possibleNumbers < 1)
-        {
+        if (areNumbersBad) {
             System.out.printf("Can't generate a secret number with a length of %d with only %d unique symbols.%n", numbers, possibleNumbers);
             System.out.println("Please enter a number of possible symbols no less than a number of symbols in secret.");
             return answer;
 
-        } else
-        {
+        } else {
 
             Random random = new Random(1);
 
-            while (numbers > 0)
-            {
+            while (numbers > 0) {
                 char digit = encodeInt(random.nextInt(possibleNumbers));
 
-                // If answer already contains that digit - pass.
                 if (answer.contains(digit)) continue;
 
                 answer.add(digit);
@@ -50,18 +63,15 @@ public class Main {
 
     public static char encodeInt(int code) {
         char symbol = 0;
-        if (code < 10)
-        {
+        if (code < 10) {
             return String.valueOf(code).charAt(0);
-        } else
-        {
+        } else {
             return (char) (code - 9 + 'a');
         }
     }
 
     public static String borderDigits(int code) {
-        if (code < 2)
-        {
+        if (code < 2) {
             return code + "";
         }
 
@@ -82,11 +92,9 @@ public class Main {
         Iterator<Character> answerIterator = correctAnswer.iterator();
 
         for (int i = 0; i < size; i++) {
-            if (answerIterator.next() == input.charAt(i))
-            {
+            if (answerIterator.next() == input.charAt(i)) {
                 bulls += 1;
-            } else if (correctAnswer.contains(input.charAt(i)))
-            {
+            } else if (correctAnswer.contains(input.charAt(i))) {
                 cows += 1;
             }
         }
@@ -96,7 +104,7 @@ public class Main {
         return bulls;
     }
 
-    public static boolean isUserAnswerCorrect(String userAnswer, int numberLength) {
+    public static boolean checkUserAnswer(String userAnswer, int numberLength) {
 
         // Check if user input exactly needed number of digits
         if (userAnswer.length() != numberLength) {
@@ -107,14 +115,14 @@ public class Main {
         // Check if all digits are different
         for (char c : userAnswer.toCharArray())
         {
-            if (userAnswer.length() - userAnswer.replaceAll(Character.toString(c),"").length() > 1)
-            {
+            if (userAnswer.length() - userAnswer.replaceAll(Character.toString(c),"").length() > 1) {
                 System.out.println("Please ensure that all digits are different.");
                 return false;
             }
         }
 
-        // Check if there is no forbidden symbols
+        // Check if there is no forbidden symbols - later
+
 
         return true;
     }
@@ -131,53 +139,37 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Hello, player! Enter the length of the secret number:");
-        int secretNumberLength = scanner.nextInt();
-        scanner.nextLine();
+        System.out.println("Hello, player!");
 
-        System.out.println("Enter the number of unique symbols in code:");
-        int secretNumberOfSymbols = scanner.nextInt();
-        scanner.nextLine();
+        int[] userInput = readUserInput(scanner);
+        Set<Character> secretNumber = secretGenerator(userInput[0], userInput[1]);
 
-        Set<Character> secretNumber = secretGenerator(secretNumberLength, secretNumberOfSymbols);
+        while (secretNumber.isEmpty()) {
 
-        while (secretNumber.isEmpty())
-        {
             System.out.println("Do you wish to input length once more? 1 - yes, other - no");
             String wishAgain = scanner.nextLine().trim();
 
-            if ("1".equals(wishAgain))
-            {
-                System.out.println("Enter the length of the secret number.");
-                secretNumberLength = scanner.nextInt();
-                scanner.nextLine();
+            if ("1".equals(wishAgain)) {
+                userInput = readUserInput(scanner);
+                secretNumber = secretGenerator(userInput[0], userInput[1]);
 
-
-                System.out.println("Enter the number of unique symbols in code:");
-                secretNumberOfSymbols = scanner.nextInt();
-                scanner.nextLine();
-
-                secretNumber = secretGenerator(secretNumberLength, secretNumberOfSymbols);
             } else {
                 break;
             }
         }
 
-        if (!secretNumber.isEmpty())
-        {
+        if (!secretNumber.isEmpty()) {
             int userBulls = 0;
             int turns = 1;
-            while (userBulls != secretNumberLength)
-            {
+            while (userBulls != userInput[0]) {
                 System.out.printf("%nTurn %d. Answer:%n", turns);
                 String userAnswer = scanner.nextLine().trim();
-                if (wishToExit(userAnswer))
-                {
+                if (wishToExit(userAnswer)) {
                     System.out.println("Exiting the game...");
                     break;
                 }
 
-                if (isUserAnswerCorrect(userAnswer, secretNumberLength)) {
+                if (checkUserAnswer(userAnswer, userInput[0])) {
                     userBulls = grader(secretNumber, userAnswer);
                 }
                 System.out.println("");
@@ -185,7 +177,7 @@ public class Main {
 
             }
 
-            if (userBulls == secretNumberLength) {
+            if (userBulls == userInput[0]) {
                 System.out.printf("Congrats! The secret number is %s.%n", secretNumber);
             }
         }
