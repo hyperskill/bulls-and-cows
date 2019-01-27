@@ -64,16 +64,11 @@ public class Main {
     }
 
     private static String getSecretNumber(int secretNumLength) {
-        long pseudoRandomNumber = System.nanoTime();
         String secretNumStr = "";
         for (int i = 1; i <= secretNumLength; i++) {
-            String digitForSecretNum = pseudoRandomNumber % 10 + "";
+            String digitForSecretNum = ((int) (Math.random() * 10)) + "";
             while (secretNumStr.indexOf(digitForSecretNum) >= 0) {
-                pseudoRandomNumber /= 10;
-                if (pseudoRandomNumber < 1) {
-                    pseudoRandomNumber = System.nanoTime();
-                }
-                digitForSecretNum = pseudoRandomNumber % 10 + "";
+                digitForSecretNum = ((int) (Math.random() * 10)) + "";
             }
             secretNumStr += digitForSecretNum;
         }
