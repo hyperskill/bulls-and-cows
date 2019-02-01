@@ -1,77 +1,112 @@
 package bullsandcows;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
+    static HashSet<Character> possibleSymbolsCharSet = new HashSet<>();
+    static HashSet<Character> secretCodeSymbolsCharSet = new HashSet<>();
+    static String stringCharSet = "0123456789abcdefghijklmnopqrstuvwxyz";
+    static int secretCodeLength;
+    static String secretCode;
+    static int numOfPossibleChars;
+
     public static void main(String[] args) {
         boolean endOfGame = false;
         Scanner scan = new Scanner(System.in);
-        int secretNumLength = getSecretNumLength(scan);
-        String secretNumStr = getSecretNumber(secretNumLength);
-        secretNumberGuessing(endOfGame, scan, secretNumLength, secretNumStr);
+        secretCodeLength = getSecretCodeLength(scan);
+        getPossibleSymbolsSet(scan);
+        secretCode = getSecretCode(secretCodeLength, possibleSymbolsCharSet); //fills secretCodeSymbolsCharSet :)
+        //System.out.println(secretCode); //for testing
+        messageAboutSecretCode();
+        secretNumberGuessing(endOfGame, scan, secretCodeLength, secretCode);
 
         scan.close();
     }
 
-    public static void secretNumberGuessing(boolean endOfGame, Scanner scan, int secretNumLength, String secretNumStr) {
+    public static void secretNumberGuessing(boolean endOfGame, Scanner scan, int secretCodeLength, String secretCode) {
         while (!endOfGame) {
-            System.out.println("Try to guess the secret number.");
-            String numberFromGamer = scan.next();
-            if (numberFromGamer.length() != secretNumLength) {
-                System.out.println("Wrong length of a number. Please enter a number with " + secretNumLength + " digits.");
+            System.out.println("Try to guess the secret.");
+            String codeFromGamer = scan.next();
+            if (codeFromGamer.length() != secretCodeLength) {
+                System.out.println("Wrong length of a code. Please enter a code with " + secretCodeLength + " symbols.");
                 continue;
             }
-            endOfGame = grader(secretNumStr, numberFromGamer);
+            endOfGame = grader(secretCode, codeFromGamer);
         }
     }
 
-    private static int getSecretNumLength(Scanner scan) {
-        System.out.println("Input secret number's length: ");
-        int secretNumLength = scan.nextInt();
-        if (secretNumLength > 10) {
-            System.out.println("Can't generate a secret number with a length of 100 because there aren't enough unique digits. " +
-                                "Please enter a number not greater than 10.");
-            secretNumLength = scan.nextInt();
-        }
-        return secretNumLength;
+    private static int getSecretCodeLength(Scanner scan) {
+        System.out.println("Input secret code's length: ");
+        int secretCodeLength = scan.nextInt();
+        return secretCodeLength;
     }
 
-    private static boolean grader(String secretNumStr, String numberFromGamer) {
+    private static void getPossibleSymbolsSet(Scanner scan) {
+        System.out.println("Input the number of possible symbols in the code: ");
+        numOfPossibleChars = scan.nextInt();
+        for (int i = 0; i < numOfPossibleChars; i++) {
+            possibleSymbolsCharSet.add(stringCharSet.charAt(i));
+        }
+    }
+
+    private static String getSecretCode(int secretCodeLength, HashSet<Character> setOfPossibleSymbols) {
+        String secretCode = "";
+        HashMap<Integer, Character> mapOfPossibleSymbols = new HashMap<>();
+        int mapK = 0;
+        Random random = new Random();
+        for (char symbol : setOfPossibleSymbols) {
+            mapOfPossibleSymbols.put(mapK,symbol);
+            mapK++;
+        }
+        for (int i = 0; i < secretCodeLength; i++) {
+            int index = random.nextInt(numOfPossibleChars);
+            char randomSymbol = mapOfPossibleSymbols.get(index);
+            while (randomSymbol == ' ') {
+                index = random.nextInt(numOfPossibleChars);
+                randomSymbol = mapOfPossibleSymbols.get(index);
+            }
+            secretCode += randomSymbol;
+            secretCodeSymbolsCharSet.add(randomSymbol);
+            mapOfPossibleSymbols.put(index, ' ');
+        }
+        return secretCode;
+    }
+
+    private static void messageAboutSecretCode () {
+        String messageStars = "";
+        for (int i = 0; i < secretCodeLength; i++) {
+            messageStars += "*";
+        }
+        if (numOfPossibleChars <= 10) {
+            System.out.println("The secret is prepared: " + messageStars + " (0-" + (numOfPossibleChars-1) + ").");
+        } else if (numOfPossibleChars == 11) {
+            System.out.println("The secret is prepared: " + messageStars + " (0-9),  a.");
+        } else {
+            System.out.println("The secret is prepared: " + messageStars + " (0-9)" +
+                    ", (a-" + stringCharSet.charAt(numOfPossibleChars-1) + ").");
+        }
+    }
+
+    private static boolean grader(String secretCode, String codeFromGamer) {
         boolean endOfGame = false;
-        int secretNumLength = secretNumStr.length();
         int bulls = 0;
         int cows = 0;
-        if (secretNumStr.equals(numberFromGamer)) {
-            System.out.println("Congratulations! You input true secret number!");
+        if (secretCode.equals(codeFromGamer)) {
+            System.out.println("Congratulations! You input true secret code!");
             endOfGame = true;
             return endOfGame;
         }
-        char[] secretNumCharArray = secretNumStr.toCharArray();
-        char[] numberFromGamerCharArray = numberFromGamer.toCharArray();
-        for (int i = 0; i < secretNumLength; i++) {
-            for (int j = 0; j < secretNumLength; j++) {
-                if (i == j && secretNumCharArray[i] == numberFromGamerCharArray[j]) {
-                    bulls++;
-                    continue;
-                }
-                if (i != j && secretNumCharArray[i] == numberFromGamerCharArray[j]) {
-                    cows++;
-                }
+        char[] secretCodeCharArray = secretCode.toCharArray();
+        char[] codeFromGamerCharArray = codeFromGamer.toCharArray();
+        for (int i = 0; i < secretCodeLength; i++) {
+            if (secretCodeCharArray[i] == codeFromGamerCharArray[i]) {
+                bulls++;
+                continue;
+            } else if (secretCodeSymbolsCharSet.contains(codeFromGamerCharArray[i])) {
+                cows++;
             }
         }
-        System.out.println(bulls + " bull(s) + and " + cows + " cow(s)."/* The secret number is " + secretNumStr*/);
+        System.out.println(bulls + " bull(s) + and " + cows + " cow(s).");
         return endOfGame;
-    }
-
-    private static String getSecretNumber(int secretNumLength) {
-        String secretNumStr = "";
-        for (int i = 1; i <= secretNumLength; i++) {
-            String digitForSecretNum = ((int) (Math.random() * 10)) + "";
-            while (secretNumStr.indexOf(digitForSecretNum) >= 0) {
-                digitForSecretNum = ((int) (Math.random() * 10)) + "";
-            }
-            secretNumStr += digitForSecretNum;
-        }
-        return secretNumStr;
     }
 }
