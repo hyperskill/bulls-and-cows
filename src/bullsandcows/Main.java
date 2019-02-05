@@ -8,6 +8,7 @@ public class Main {
 
     private static void playingGame() {
         Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
         System.out.print("Input the secret number’s length: ");
         int longOfNum = scanner.nextInt();
         if (longOfNum>10) {
@@ -15,11 +16,11 @@ public class Main {
             System.out.println ("Please enter a number not greater than 10.");
             return;
         }
-        long pseudoRandomNumber;
+        long randomNumber;
         String secretNumber;
         do {
-            pseudoRandomNumber = System.nanoTime();
-            secretNumber=giveSecretNumber(pseudoRandomNumber);
+            randomNumber = random.nextInt();
+            secretNumber=giveSecretNumber(randomNumber);
         } while (secretNumber.length()<longOfNum);
         String numberForPrint="";
         if (secretNumber.length()>longOfNum) {
@@ -40,8 +41,8 @@ public class Main {
 
     }
 
-    private static String giveSecretNumber(long pseudoRandomNumber) {
-        String num = Long.toString(pseudoRandomNumber);
+    private static String giveSecretNumber(long randomNumber) {
+        String num = Long.toString(randomNumber);
         String secretNumber="";
         int numLength = num.length();
         for (int i=1; i<=numLength; i++) {
