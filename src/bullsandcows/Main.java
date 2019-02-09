@@ -5,59 +5,53 @@ public class Main {
         playingGame();
     }
 
-
     private static void playingGame() {
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
-        System.out.print("Input the secret number’s length: ");
+        System.out.print("Input the length of the secret code: ");
         int longOfNum = scanner.nextInt();
-        if (longOfNum>10) {
-            System.out.println ("Can't generate a secret number with a length of"  + longOfNum +  "because there aren't enough unique digits.");
-            System.out.println ("Please enter a number not greater than 10.");
-            return;
-        }
-        long randomNumber;
-        String secretNumber;
-        do {
-            randomNumber = random.nextInt();
-            secretNumber=giveSecretNumber(randomNumber);
-        } while (secretNumber.length()<longOfNum);
+        System.out.print("Input the number of possible symbols in the code: ");
+        int numOfSymbols = scanner.nextInt();
+        Set<Character> secretCode = giveSecretCode(longOfNum, numOfSymbols);
         String numberForPrint="";
-        if (secretNumber.length()>longOfNum) {
-            String newSecretNumber = secretNumber.substring(0,longOfNum);
-            for (int i=0; i<newSecretNumber.length(); i++){
-                numberForPrint = numberForPrint + "*";
+        for (int i=0; i<secretCode.size(); i++){
+            numberForPrint = numberForPrint + "*";
             }
-            System.out.println ("The random secret number is " + numberForPrint +".");
-            checkingAnswer (newSecretNumber);
+        if (numOfSymbols<10){
+            System.out.println ("The secret is prepared: " + numberForPrint + ". 0-" + (numOfSymbols-1));
         } else {
-            for (int i=0; i<secretNumber.length(); i++){
-                numberForPrint = numberForPrint + "*";
-            }
-            System.out.println ("The random secret number is " + numberForPrint + ".");
-            checkingAnswer (secretNumber);
+            System.out.println("The secret is prepared: " + numberForPrint + ". 0-9, a-" + (char)(numOfSymbols+86));
         }
-
-
+        checkingAnswer (secretCode);
     }
 
-    private static String giveSecretNumber(long randomNumber) {
-        String num = Long.toString(randomNumber);
-        String secretNumber="";
-        int numLength = num.length();
-        for (int i=1; i<=numLength; i++) {
-            if (!secretNumber.contains(Character.toString(num.charAt(numLength-i)))) {
-                secretNumber = secretNumber + num.charAt(numLength-i);
+    private static Set<Character> giveSecretCode(int longOfNum, int numOfSymbols) {
+        Random random = new Random();
+        Set<Character> secretCode = new LinkedHashSet<>();
+        do {
+            int randomNumber = random.nextInt(numOfSymbols);
+            char randomSymboll;
+            if (randomNumber<10) {
+                randomSymboll = (char) (randomNumber+48);
+            } else {
+                randomSymboll = (char) (randomNumber+87);
             }
-        }
-        return secretNumber;
+            if (!secretCode.contains(randomSymboll)) {
+                secretCode.add(randomSymboll);
+            }
+        } while (secretCode.size()<longOfNum);
+        return secretCode;
     }
 
-    private static void checkingAnswer (String secretNumber) {
+    private static void checkingAnswer (Set<Character> secretCode) {
         Scanner scanner = new Scanner(System.in);
         int counter = 1;
         int numOfBulls;
         int numOfCows;
+        String strSecretCode = secretCode.toString();
+        strSecretCode=strSecretCode.replace(", ", "");
+        strSecretCode=strSecretCode.replace("[", "");
+        strSecretCode=strSecretCode.replace("]", "");
         do {
             System.out.println("Turn " + counter + ". Answer:");
             counter++;
@@ -65,16 +59,16 @@ public class Main {
             numOfBulls=0;
             numOfCows=0;
             for (int i=0; i<userGuess.length(); i++) {
-                if (userGuess.charAt(i) == secretNumber.charAt(i)) {
+                if (userGuess.charAt(i) == strSecretCode.charAt(i)) {
                     numOfBulls++;
-                } else if (secretNumber.contains(Character.toString(userGuess.charAt(i)))) {
+                } else if (strSecretCode.contains(Character.toString(userGuess.charAt(i)))) {
                     numOfCows++;
                 }
             }
             System.out.println("Grade: " + numOfBulls + " bill(s) and " + numOfCows + " cow(s)");
             System.out.println();
-        } while (numOfBulls!=secretNumber.length());
-        System.out.println("Congrats! The secret number is " + secretNumber);
+        } while (numOfBulls!=strSecretCode.length());
+        System.out.println("Congrats! The secret number is " + strSecretCode);
     }
 }
 
