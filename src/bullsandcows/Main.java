@@ -36,14 +36,49 @@ public class Main {
     }
 
     private static int getSecretCodeLength(Scanner scan) {
-        System.out.println("Input secret code's length: ");
-        int secretCodeLength = scan.nextInt();
+        int secretCodeLength;
+        String inputLine = "";
+        while (true) {
+            System.out.println("Input secret code's length: ");
+            try {
+                inputLine = scan.nextLine();
+                secretCodeLength = Integer.parseInt(inputLine);
+
+            } catch (NumberFormatException e) {
+                System.out.println("\"" + inputLine + "\" isn't a valid number.");
+                continue;
+            }
+            if (secretCodeLength <= 0) {
+                System.out.println("Length must be positive.");
+                continue;
+            }
+            break;
+        }
         return secretCodeLength;
     }
 
     private static void getPossibleSymbolsSet(Scanner scan) {
-        System.out.println("Input the number of possible symbols in the code: ");
-        numOfPossibleChars = scan.nextInt();
+        String inputLine = "";
+        while (true) {
+            System.out.println("Input the number of possible symbols in the code: ");
+            try {
+                inputLine = scan.nextLine();
+                numOfPossibleChars = Integer.parseInt(inputLine);
+                if (numOfPossibleChars < secretCodeLength) {
+                    System.out.println("It's not possible to generate a code with a length of " + secretCodeLength +
+                            " with " + numOfPossibleChars + " unique symbols.");
+                    continue;
+                } else if (numOfPossibleChars > 36) {
+                    System.out.println("Maximum number of possible symbols in the code is 36 (0-9, a-z).");
+                    continue;
+                } else {
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\"" + inputLine + "\" isn't a valid number.");
+                continue;
+            }
+        }
         for (int i = 0; i < numOfPossibleChars; i++) {
             possibleSymbolsCharSet.add(stringCharSet.charAt(i));
         }
