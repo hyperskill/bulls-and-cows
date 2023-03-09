@@ -2,4 +2,4 @@
 
 Project: Bulls and Cows
 
-Go to the *src* directory, change *Main.java* and put your *.java* file(s) in it.
+Write your own advanced version of the classic code breaking game "Bulls and Cows". Start with recreating the original version of the game and then take it to a new level.
